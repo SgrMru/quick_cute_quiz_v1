@@ -3,98 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Little Quiz 💕</title>
+  <title>Our Little Secret Quiz 💕</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e);
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
       margin: 0;
       padding: 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
     .container {
       background: white;
+      width: 100%;
       max-width: 420px;
-      width: 90%;
+      margin: 10px;
       border-radius: 30px;
       box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
       overflow: hidden;
-      position: relative;
+      max-height: 100vh;
     }
 
     .header {
       background: linear-gradient(135deg, #ff69b4, #ff1493);
       color: white;
       text-align: center;
-      padding: 25px 20px;
+      padding: 20px;
       position: relative;
     }
 
     .header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 26px;
     }
 
     .hearts {
       position: absolute;
-      top: 10px;
-      right: 15px;
+      top: 12px;
+      right: 20px;
       font-size: 28px;
       animation: float 3s infinite;
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
     .progress-bar {
-      height: 6px;
+      height: 8px;
       background: #ff69b4;
       transition: width 0.4s ease;
     }
 
     .content {
-      padding: 30px 25px;
-      text-align: center;
+      padding: 25px 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 80px);
     }
 
     .question {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
       color: #333;
-      margin-bottom: 30px;
-      min-height: 80px;
+      margin-bottom: 28px;
+      line-height: 1.35;
     }
 
     .options {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .option {
       background: #fff0f5;
       border: 2px solid #ffb6c1;
       border-radius: 20px;
-      padding: 16px 20px;
+      padding: 17px 20px;
       text-align: left;
-      font-size: 17px;
+      font-size: 16.5px;
       cursor: pointer;
       transition: all 0.3s;
+      line-height: 1.4;
     }
 
-    .option:hover {
+    .option:hover, .option:active {
       background: #ffe4e9;
       border-color: #ff69b4;
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
 
     .option.selected {
@@ -105,7 +104,7 @@
 
     button {
       margin-top: 25px;
-      padding: 14px 40px;
+      padding: 16px 40px;
       background: linear-gradient(135deg, #ff69b4, #ff1493);
       color: white;
       border: none;
@@ -113,6 +112,7 @@
       font-size: 18px;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+      width: 100%;
     }
 
     button:disabled {
@@ -121,24 +121,30 @@
     }
 
     .result {
-      display: none;
-      padding: 30px 25px;
+      padding: 25px 20px;
     }
 
     .score {
-      font-size: 48px;
+      font-size: 42px;
       font-weight: 700;
       color: #ff1493;
+      margin: 10px 0 20px;
     }
 
     .instruction {
-      margin-top: 25px;
-      padding: 18px;
+      margin: 25px 0;
+      padding: 20px;
       background: #fff0f5;
       border-radius: 20px;
       font-size: 16px;
       color: #ff1493;
       border: 2px solid #ffb6c1;
+      line-height: 1.45;
+    }
+
+    #answers-summary p {
+      margin: 16px 0;
+      text-align: left;
     }
   </style>
 </head>
@@ -156,43 +162,28 @@
       <button id="next-btn" disabled>Next →</button>
     </div>
 
-    <div class="result" id="result">
-      <h2 style="color:#ff1493;">Quiz Complete! 🎉</h2>
-      <p class="score" id="score-text"></p>
+    <div class="content result" id="result" style="display: none;">
+      <h2 style="color:#ff1493; text-align:center;">Quiz Complete! 🎉</h2>
+      <p class="score" id="score-text" style="text-align:center;"></p>
       
       <div id="answers-summary"></div>
 
       <div class="instruction">
-        📸 <strong>Please screenshot this page</strong> and send it to Sagar 💌<br>
+        📸 <strong>Please screenshot this whole page</strong> and send it to Sagar 💌<br>
         He’s waiting to see your answers! ✨
       </div>
 
-      <button onclick="copyResults()" style="margin-top: 15px;">Or Copy Text Instead</button>
+      <button onclick="copyResults()">Copy Text Instead</button>
     </div>
   </div>
 
   <script>
     const questions = [
-      { 
-        q: "What’s your favorite thing about hanging out with me?", 
-        options: ["The deep conversations we have", "How we always end up laughing so much", "The comfortable silence and vibes", "All of the above – it’s always fun"] 
-      },
-      { 
-        q: "If we had a whole free day together, what would you want to do?", 
-        options: ["Go on a long drive or explore a new place", "Chill at home/cafe and talk about everything", "Watch movies or play games", "Anything, as long as it’s with you"] 
-      },
-      { 
-        q: "What do you like most about my personality?", 
-        options: ["How smart and thoughtful you are", "Your kindness and the way you make me feel special", "Your sense of humor and positive energy", "A mix of everything – you’re genuinely great"] 
-      },
-      { 
-        q: "How do you feel when we’re texting or talking?", 
-        options: ["I smile every time I see your message", "It’s nice and comforting", "I look forward to it", "It always makes my day better"] 
-      },
-      { 
-        q: "What’s one thing you wish we could do more often together?", 
-        options: ["Go on more adventures", "Have more long talks", "Just spend chill time together", "All of the above – I enjoy our time"] 
-      }
+      { q: "What’s your favorite thing about hanging out with me?", options: ["The deep conversations we have", "How we always end up laughing so much", "The comfortable silence and vibes", "All of the above – it’s always fun"] },
+      { q: "If we had a whole free day together, what would you want to do?", options: ["Go on a long drive or explore a new place", "Chill at home/cafe and talk about everything", "Watch movies or play games", "Anything, as long as it’s with you"] },
+      { q: "What do you like most about my personality?", options: ["How smart and thoughtful you are", "Your kindness and the way you make me feel special", "Your sense of humor and positive energy", "A mix of everything – you’re genuinely great"] },
+      { q: "How do you feel when we’re texting or talking?", options: ["I smile every time I see your message", "It’s nice and comforting", "I look forward to it", "It always makes my day better"] },
+      { q: "What’s one thing you wish we could do more often together?", options: ["Go on more adventures", "Have more long talks", "Just spend chill time together", "All of the above – I enjoy our time"] }
     ];
 
     let currentQuestion = 0;
@@ -231,7 +222,7 @@
     }
 
     function updateProgress() {
-      const percent = ((currentQuestion) / questions.length) * 100;
+      const percent = ((currentQuestion + 1) / questions.length) * 100;
       progress.style.width = percent + '%';
     }
 
@@ -258,7 +249,9 @@
 
       questions.forEach((q, i) => {
         const ans = answers[i] !== undefined ? q.options[answers[i]] : "Not answered";
-        summary.innerHTML += `<p><strong>Q${i+1}:</strong> ${q.q}<br><strong style="color:#ff1493">→ ${ans}</strong></p>`;
+        summary.innerHTML += `
+          <p><strong>Q${i+1}:</strong> ${q.q}<br>
+          <strong style="color:#ff1493">→ ${ans}</strong></p>`;
       });
     }
 
@@ -275,7 +268,6 @@
       });
     }
 
-    // Start game
     loadQuestion();
   </script>
 </body>
