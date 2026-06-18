@@ -7,9 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -76,6 +74,18 @@
       overflow-y: auto;
       padding: 25px 20px;
       -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .question-container {
+      flex: 1;
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .question {
@@ -90,6 +100,7 @@
       display: flex;
       flex-direction: column;
       gap: 13px;
+      flex: 1;
     }
 
     .option {
@@ -100,9 +111,16 @@
       text-align: left;
       font-size: 16px;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.3s ease;
       line-height: 1.45;
+      animation: fadeInUp 0.4s ease forwards;
+      opacity: 0;
     }
+
+    .option:nth-child(1) { animation-delay: 0.1s; }
+    .option:nth-child(2) { animation-delay: 0.2s; }
+    .option:nth-child(3) { animation-delay: 0.3s; }
+    .option:nth-child(4) { animation-delay: 0.4s; }
 
     .option:hover, .option:active {
       background: #ffe4e9;
@@ -117,7 +135,7 @@
     }
 
     button {
-      margin: 25px auto 15px;
+      margin: 25px auto 20px;
       padding: 16px 40px;
       background: linear-gradient(135deg, #ff69b4, #ff1493);
       color: white;
@@ -129,17 +147,27 @@
       display: block;
       width: 90%;
       max-width: 280px;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(255, 105, 180, 0.5);
     }
 
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
+    /* Result Screen */
     .result h2 {
       text-align: center;
       color: #ff1493;
       margin-bottom: 10px;
+      animation: fadeInUp 0.6s ease;
     }
 
     .score {
@@ -148,6 +176,7 @@
       color: #ff1493;
       text-align: center;
       margin: 10px 0 20px;
+      animation: fadeInUp 0.7s ease;
     }
 
     .instruction {
@@ -159,17 +188,13 @@
       color: #ff1493;
       border: 2px solid #ffb6c1;
       line-height: 1.5;
+      animation: fadeInUp 0.8s ease;
     }
 
     #answers-summary p {
       margin: 15px 0;
       padding-bottom: 10px;
       border-bottom: 1px solid #ffe4e9;
-    }
-
-    @media (max-width: 380px) {
-      .question { font-size: 19px; }
-      .option { font-size: 15.5px; padding: 15px 16px; }
     }
   </style>
 </head>
@@ -183,8 +208,10 @@
 
     <!-- Quiz Screen -->
     <div class="content" id="quiz">
-      <div class="question" id="question-text"></div>
-      <div class="options" id="options"></div>
+      <div class="question-container" id="question-container">
+        <div class="question" id="question-text"></div>
+        <div class="options" id="options"></div>
+      </div>
       <button id="next-btn" disabled>Next →</button>
     </div>
 
@@ -223,22 +250,28 @@
     const nextBtn = document.getElementById('next-btn');
     const quizDiv = document.getElementById('quiz');
     const resultDiv = document.getElementById('result');
+    const questionContainer = document.getElementById('question-container');
 
     function loadQuestion() {
-      questionText.textContent = questions[currentQuestion].q;
-      optionsDiv.innerHTML = '';
+      questionContainer.style.opacity = 0;
+      
+      setTimeout(() => {
+        questionText.textContent = questions[currentQuestion].q;
+        optionsDiv.innerHTML = '';
 
-      questions[currentQuestion].options.forEach((opt, index) => {
-        const div = document.createElement('div');
-        div.className = 'option';
-        div.textContent = opt;
-        div.onclick = () => selectOption(index, div);
-        optionsDiv.appendChild(div);
-      });
+        questions[currentQuestion].options.forEach((opt, index) => {
+          const div = document.createElement('div');
+          div.className = 'option';
+          div.textContent = opt;
+          div.onclick = () => selectOption(index, div);
+          optionsDiv.appendChild(div);
+        });
 
-      nextBtn.disabled = true;
-      selectedIndex = -1;
-      updateProgress();
+        questionContainer.style.opacity = 1;
+        nextBtn.disabled = true;
+        selectedIndex = -1;
+        updateProgress();
+      }, 300);
     }
 
     function selectOption(index, element) {
@@ -266,7 +299,7 @@
     function showResults() {
       quizDiv.style.display = 'none';
       resultDiv.style.display = 'block';
-
+      
       let score = answers.length * 25;
       document.getElementById('score-text').textContent = score + "/100 💖";
 
@@ -290,7 +323,6 @@
       navigator.clipboard.writeText(text).then(() => alert("✅ Copied! Send to Sagar 💕"));
     }
 
-    // Start the quiz
     loadQuestion();
   </script>
 </body>
